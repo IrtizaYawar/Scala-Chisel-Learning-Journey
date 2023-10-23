@@ -1,0 +1,19 @@
+id: file:///C:/Users/Saffy%20Yawar/Scala-Chisel-Learning-Journey/src/test/scala/gcd/single_cycle/datamemtester.scala:[140..147) in Input.VirtualFile("file:///C:/Users/Saffy%20Yawar/Scala-Chisel-Learning-Journey/src/test/scala/gcd/single_cycle/datamemtester.scala", "package single_cycle
+
+
+import chisel3.tester._
+ import org.scalatest.FreeSpec
+ import chisel3.experimental.BundleLiterals._
+
+ class  extends FreeSpec with ChiselScalatestTester {
+     "packet tester" in {
+         test(new shift_register(10)){ a =>
+         a. io.in.poke("b0010".U)
+         a.clock.step(1)
+         a.io.out.expect("b0010".U)
+         }
+        }
+    }")
+file:///C:/Users/Saffy%20Yawar/Scala-Chisel-Learning-Journey/src/test/scala/gcd/single_cycle/datamemtester.scala:8: error: expected identifier; obtained extends
+ class  extends FreeSpec with ChiselScalatestTester {
+        ^

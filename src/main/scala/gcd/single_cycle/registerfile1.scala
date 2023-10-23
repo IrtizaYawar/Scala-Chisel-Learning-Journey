@@ -20,6 +20,8 @@ io.rs2out := 0.U
 val registerfile = Mem (32 , UInt (32. W ) )
 when(io.ren && io.rd =/= 0.U){
     registerfile(io.rd) := io.data
+    io.rs1out := registerfile(io.rs1)
+    io.rs2out := registerfile(io.rs2)
 }.otherwise{
     io.rs1out := registerfile(io.rs1)
     io.rs2out := registerfile(io.rs2)

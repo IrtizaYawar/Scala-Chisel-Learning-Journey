@@ -14,7 +14,7 @@ object aluop{
   val aluOR = 12.U(4.W)
   val aluAND = 14.U(4.W)
 }
-
+import aluop._
 class ALUD extends Module {
   val io = IO(new Bundle {
     val in_A = Input(UInt(32.W))

@@ -1,105 +1,171 @@
 package single_cycle
 
-import chisel3 . _
-import chisel3 . util . _
+import chisel3._
+import chisel3.util._
 class Datamem extends Module {
     val io = IO(new Bundle {
     val Wr_en = Input(Bool())
-    val addr = Input(UInt(32.W))
-    val Din = Input(UInt(32.W))
+    val address = Input(UInt(32.W))
+    val datain = Input(UInt(32.W))
     val Dout = Output(UInt(32.W))
+    //val Dout = Output(UInt(32.W))
     val fun3 = Input(UInt(3.W))
     //val mask = Input(Vec(4,Bool()))
   })
 
-  val memory = Mem (32 ,Vec (4 , UInt ( 8 . W ) ) )
-  val mask = Reg(Vec(4,Bool()))
-  val data = Reg(Vec(4,UInt(8.W)))
+  val memory = Mem (1024 ,Vec (4 , UInt ( 8 . W ) ) )
+  val mask = Wire(Vec(4,Bool()))
+  val data = Wire(Vec(4,UInt(8.W)))
+  val temp = Wire(Vec (4,UInt(8.W)))
 
-  data(0) := io.Din(7,0)
-  data(1) := io.Din(15,8)
-  data(2) := io.Din(23,16)
-  data(3) := io.Din(31,24)
+  io.Dout := 0.U
+
+  mask(0) := 0.B
+  mask(1) := 0.B
+  mask(2) := 0.B
+  mask(3) := 0.B
+  
+  data(0) := io.datain(7,0)
+  data(1) := io.datain(15,8)
+  data(2) := io.datain(23,16)
+  data(3) := io.datain(31,24)
+
+when(io.Wr_en){
+  when(io.fun3 === 0.U){   //SB
+    when(io.address(1,0)=== 0.U){
 
 
-  when(io.fun3 === 0.U){
-    when(io.addr(1,0)=== 0.U){
-      data(0) := io.Din(7,0)
-      data(1) := io.Din(15,8)
-      data(2) := io.Din(23,16)
-      data(3) := io.Din(31,24)
 
       mask(0) := 1.B
-      mask(1) := 0.B
-      mask(2) := 0.B
-      mask(3) := 0.B
+      // mask(1) := 0.B
+      // mask(2) := 0.B
+      // mask(3) := 0.B
+
+      data(0) := io.datain(7,0)
     }
-    .elsewhen(io.addr(1,0) === 1.U){
-      mask(0) := 0.B
+    .elsewhen(io.address(1,0) === 1.U){
+
+
+      // mask(0) := 0.B
       mask(1) := 1.B
       mask(2) := 0.B
       mask(3) := 0.B
 
-      data(0) := io.Din(7,0)
-      data(1) := io.Din(7,0)
-      data(2) := io.Din(23,16)
-      data(3) := io.Din(31,24)
+      data(1) := io.datain(7,0)
 
+      
     }
-    .elsewhen(io.addr(1,0) === 2.U){
-      mask(0) := 0.B
-      mask(1) := 0.B
+    .elsewhen(io.address(1,0) === 2.U){
+
+      // mask(0) := 0.B
+      // mask(1) := 0.B
       mask(2) := 1.B
-      mask(3) := 0.B
+      // mask(3) := 0.B
 
-      data(0) := io.Din(7,0)
-      data(1) := io.Din(15,8)
-      data(2) := io.Din(7,0)
-      data(3) := io.Din(31,24)
-
+      data(2) := io.datain(7,0)
     }
-     .elsewhen(io.addr(1,0) === 3.U){
-      mask(0) := 0.B
-      mask(1) := 0.B
-      mask(2) := 0.B
+     .elsewhen(io.address(1,0) === 3.U){  
+
+      // mask(0) := 0.B
+      // mask(1) := 0.B
+      // mask(2) := 0.B
       mask(3) := 1.B
 
-      data(0) := io.Din(7,0)
-      data(1) := io.Din(15,8)
-      data(2) := io.Din(23,16)
-      data(3) := data(0)
+      data(3) := io.datain(7,0)
 
     }
-  }
-  .elsewhen(io.fun3 === 1.U){
+  
+  .elsewhen(io.fun3 === 1.U){//SH
+
+     when(io.address(1, 0) === 0.U) {
+      mask(0) := 1.B
+      mask(1) := 1.B
+      // mask(2) := 0.B
+      // mask(3) := 0.B
+
+      data(0) := io.datain(7,0)
+      data(1) := io.datain(15,8)
+    }.elsewhen(io.address(1, 0) === 1.U) {
+
+      // mask(0) := 0.B
+      mask(1) := 1.B
+      // mask(2) := 1.B
+      mask(3) := 0.B
+
+      data(1) := io.datain(7,0)
+      data(2) := io.datain(15,8)
+    }
+    .elsewhen( io.address(1, 0) === 2.U) {
+
+      // mask(0) := 0.B
+      // mask(1) := 0.B
+      mask(2) := 1.B
+      mask(3) := 1.B
+
+      data(2) :=io.datain(7,0)
+      data(3) := io.datain(15,8)
+    }
+    .elsewhen( io.address(1, 0) === 3.U) {
+
+      mask(0) := 1.B
+      // mask(1) := 0.B
+      // mask(2) := 0.B
+      mask(3) := 1.B
+
+      data(3) :=io.datain(7,0)
+      data(0) := io.datain(15,8)
+    }
+
+   }
+   .elsewhen(io.fun3 === 2.U){//SW
+
+    //  when(io.address(1, 0) === 0.U) {
+  
+
+      mask(0) := 1.B
+      mask(1) := 1.B
+      mask(2) := 1.B
+      mask(3) := 1.B
+
+  data(0) := io.datain(7,0)
+  data(1) := io.datain(15,8)
+  data(2) := io.datain(23,16)
+  data(3) := io.datain(31,24)
+    // }
     
   }
+}
+// val wr_address = io.address()
+  memory.write(io.address(31,2),data, mask)
+   temp:=memory.read(io.address(31,2))
+  }
 
+temp:= memory.read(io.address(31,2))
 
-  memory.write(io.addr(31,2),data,mask)
+when(io.fun3 === 0.U) {//LB
+    when(io.address(1,0) === 0.U){
+    io.Dout := Cat(Fill(24,temp(0)(7)),temp(0))}
+    .elsewhen(io.address(1,0)=== 1.U){
+    io.Dout := Cat(Fill(24,temp(1)(7)),temp(1))}
+    .elsewhen(io.address(1,0)=== 2.U){
+    io.Dout := Cat(Fill(24,temp(2)(7)),temp(2))}
+    .elsewhen(io.address(1,0)=== 3.U){
+    io.Dout := Cat(Fill(24,temp(3)(7)),temp(3))}
+
+  }.elsewhen(io.fun3 === 1.U) {//LH
+    when(io.address(1,0) === 0.U){
+    io.Dout := Cat(Fill(16,temp(0)(7)),temp(0),temp(1))}
+    .elsewhen(io.address(1,0)=== 1.U){
+    io.Dout := Cat(Fill(16,temp(1)(7)),temp(1),temp(2))}
+    .elsewhen(io.address(1,0)=== 2.U){
+    io.Dout := Cat(Fill(16,temp(2)(7)),temp(2),temp(3))}
+    .elsewhen(io.address(1,0)=== 3.U){
+    io.Dout := Cat(Fill(24,temp(3)(7)),temp(3))}
+  }.elsewhen(io.fun3 === 2.U) { //lW
+    io.Dout := Cat(temp(3), temp(2), temp(1), temp(0))
+}
+}
+
 
  
   
-
-  // when (io.Wr_en){
-  //   memory.write(io.addr,x,io.mask)
-  //   x := memory.read(io.addr)
-  //   when(io.mask(0) ===1.B && io.mask(1) ===1.B && io.mask(2) ===1.B && io.mask(3) ===1.B){
-
-  //     io.Dout(7,0) := x(0)
-  //     io.Dout(15,8) := x(1)
-  //     io.Dout(23,16) := x(2)
-  //     io.Dout(24,31) := x(3)
-  // }
-  //   //io.Dout := memory.read(io.addr)
-  // }
-
-  // x := memory.read(io.addr)
-
-  // when(io.mask(0) ===1.B && io.mask(1) ===1.B && io.mask(2) ===1.B && io.mask(3) ===1.B){
-
-  //   io.Dout(7,0) := x(0)
-  //   io.Dout(15,8) := x(1)
-  //   io.Dout(23,16) := x(2)
-  //   io.Dout(24,31) := x(3)
-  }

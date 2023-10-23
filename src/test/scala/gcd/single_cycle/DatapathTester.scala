@@ -9,8 +9,8 @@ import chisel3._
  class Datapathtester extends FreeSpec with ChiselScalatestTester{
     "Datapath tester file"in{
         test(new Datapath) { a => 
-            a.clock.step()
-            a.io.out.expect(2.U)
+            a.clock.step(200)
+            a.io.out.expect(0.U)
         }
     }
 }

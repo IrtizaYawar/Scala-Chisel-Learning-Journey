@@ -1,5 +1,6 @@
 package lab2
 import chisel3 . _
+import scala.language.postfixOps
 // Mux IO interface class
 class Mux_2to1_IO extends Bundle {
 val in_A = Input ( UInt (32. W ) )
@@ -14,3 +15,6 @@ val io = IO (new Mux_2to1_IO )
 io . out := io . in_A & io . select | io . in_B & (~ io . select )
 }
 // println (( new chisel3 . stage . ChiselStage ) . emitVerilog (new Mux_2to1 () ) )
+object Main extends App{
+    println((new chisel3.stage.ChiselStage).emitVerilog(new Mux_2to1))
+}

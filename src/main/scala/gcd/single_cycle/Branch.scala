@@ -13,57 +13,39 @@ val io = IO (new LM_IO_Interface_BranchControl )
 io.br_taken := 0.B
 switch(io.fnct3)
 {
-    is(0.U){
-        when(io.arg_x===io.arg_y){
+    is(0.U){//BEQ
+        when((io.arg_x === io.arg_y) && (io.branch === 1.B)){
             io.br_taken:=1.B
-        }
-        .otherwise{
-            io.br_taken:=0.B
         }
 
     }
-    is(1.U){
-        when(io.arg_x=/=io.arg_y){
+    is(1.U){//BNE
+        when((io.arg_x=/=io.arg_y) && (io.branch === 1.B)){
             io.br_taken:=1.B
-        }
-        .otherwise{
-            io.br_taken:=0.B
         }
 
     }
     is(4.U){
-        when(io.arg_x< io.arg_y){
+        when((io.arg_x< io.arg_y)&& (io.branch === 1.B)){
             io.br_taken:=1.B
-        }
-        .otherwise{
-            io.br_taken:=0.B
         }
 
     }
     is(5.U){
-        when(io.arg_x >= io.arg_y){
+        when((io.arg_x >= io.arg_y)&& (io.branch === 1.B)){
             io.br_taken:=1.B
-        }
-        .otherwise{
-            io.br_taken:=0.B
         }
 
     }
     is(6.U){
-        when(io.arg_x< io.arg_y){
+        when((io.arg_x< io.arg_y)&& (io.branch === 1.B)){
             io.br_taken:=1.B
-        }
-        .otherwise{
-            io.br_taken:=0.B
         }
 
     }
     is(7.U){
-        when(io.arg_x>= io.arg_y){
+        when((io.arg_x>= io.arg_y)&& (io.branch === 1.B)){
             io.br_taken:=1.B
-        }
-        .otherwise{
-            io.br_taken:=0.B
         }
 
     }}
